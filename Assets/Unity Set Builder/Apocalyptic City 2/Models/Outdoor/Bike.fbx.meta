@@ -1,0 +1,97 @@
+fileFormatVersion: 2
+guid: 8c3c34937f8203247a7e204ee9e02ba0
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: bmx_bmx_BMX_bars
+    100004: bmx_bmx_BMX_body
+    100006: bmx_bmx_BMX_break
+    100008: bmx_bmx_BMX_chain
+    100010: bmx_bmx_BMX_grip
+    400000: //RootNode
+    400002: bmx_bmx_BMX_bars
+    400004: bmx_bmx_BMX_body
+    400006: bmx_bmx_BMX_break
+    400008: bmx_bmx_BMX_chain
+    400010: bmx_bmx_BMX_grip
+    2300000: bmx_bmx_BMX_bars
+    2300002: bmx_bmx_BMX_body
+    2300004: bmx_bmx_BMX_break
+    2300006: bmx_bmx_BMX_chain
+    2300008: bmx_bmx_BMX_grip
+    3300000: bmx_bmx_BMX_bars
+    3300002: bmx_bmx_BMX_body
+    3300004: bmx_bmx_BMX_break
+    3300006: bmx_bmx_BMX_chain
+    3300008: bmx_bmx_BMX_grip
+    4300000: bmx_bmx_BMX_body
+    4300002: bmx_bmx_BMX_bars
+    4300004: bmx_bmx_BMX_grip
+    4300006: bmx_bmx_BMX_break
+    4300008: bmx_bmx_BMX_chain
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.6
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
