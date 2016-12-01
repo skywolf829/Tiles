@@ -78,6 +78,7 @@ public class TilingGenerator : EditorWindow
         HEBPString = EditorGUILayout.TextField("HEBP", HEBPString);
         EditorGUILayout.Space();
 
+		EditorGUILayout.LabelField ("End tiles with the entrance at the bottom of the tile");
         for (int i = 0; i < EndTiles.Count; i++)
         {
             EndTiles[i] = (GameObject)EditorGUILayout.ObjectField("End tile " + i, EndTiles[i], typeof(GameObject), true);
@@ -95,6 +96,7 @@ public class TilingGenerator : EditorWindow
 
         EditorGUILayout.Space();
 
+		EditorGUILayout.LabelField ("Through tiles oriented vertically");
         for (int i = 0; i < ThroughTiles.Count; i++)
         {
             ThroughTiles[i] = (GameObject)EditorGUILayout.ObjectField("Through tile " + i, ThroughTiles[i], typeof(GameObject), true);
@@ -112,6 +114,7 @@ public class TilingGenerator : EditorWindow
 
         EditorGUILayout.Space();
 
+		EditorGUILayout.LabelField ("L tiles oriented as an L");
 
         for (int i = 0; i < LTiles.Count; i++)
         {
@@ -130,6 +133,7 @@ public class TilingGenerator : EditorWindow
 
         EditorGUILayout.Space();
 
+		EditorGUILayout.LabelField ("T tiles oriented as a T");
 
         for (int i = 0; i < TTiles.Count; i++)
         {
@@ -148,6 +152,7 @@ public class TilingGenerator : EditorWindow
 
         EditorGUILayout.Space();
 
+		EditorGUILayout.LabelField ("Cross tiles");
 
         for (int i = 0; i < CrossTiles.Count; i++)
         {
@@ -168,7 +173,8 @@ public class TilingGenerator : EditorWindow
 
         if(GUILayout.Button("Build map"))
         {
-            buildMap();
+			if(ValidateBitVectors ())	
+            	buildMap();
         }
 
         GUILayout.EndScrollView();
@@ -359,35 +365,79 @@ public class TilingGenerator : EditorWindow
         {
             for(int y = 0; y < mazeHeight; y++)
             {
+				
                 // L tiles
                 if(tilemap[y, x] == TOP_LEFT || tilemap[y, x] == TOP_RIGHT || tilemap[y, x] == BOT_LEFT || tilemap[y, x] == BOT_RIGHT)
                 {
-                    GameObject.Instantiate(LTiles[(int)(Random.Range(0, LTiles.Count))], 
-                        new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+					int rot = 0;
+					int rand = (int)(Random.Range (0, LTiles.Count));
+					if (tilemap [y, x] == BOT_RIGHT) {
+						rot = 1;
+					}
+					if (tilemap [y, x] == BOT_LEFT) {
+						rot = 2;
+					}
+					if (tilemap [y, x] == TOP_LEFT) {
+						rot = 3;
+					}
+                    GameObject.Instantiate(LTiles[rand], 
+						new Vector3(-x * tileSize, 0, y * tileSize), 
+						Quaternion.Euler(new Vector3(0, (LTiles[rand].transform.eulerAngles.y + 90 * rot) % 360, 0)));
                 }
                 // T Tiles
                 if(tilemap[y, x] == TOP_T || tilemap[y, x] == BOT_T || tilemap[y, x] == RIGHT_T || tilemap[y, x] == LEFT_T)
                 {
-                    GameObject.Instantiate(TTiles[(int)(Random.Range(0, TTiles.Count))],
-                        new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+					int rot = 0;
+					int rand = (int)(Random.Range (0, TTiles.Count));
+					if (tilemap [y, x] == LEFT_T) {
+						rot = 1;
+					}
+					if (tilemap [y, x] == TOP_T) {
+						rot = 2;
+					}
+					if (tilemap [y, x] == RIGHT_T) {
+						rot = 3;
+					}
+                    GameObject.Instantiate(TTiles[rand],
+						new Vector3(-x * tileSize, 0, y * tileSize), 
+						Quaternion.Euler(new Vector3(0, (TTiles[rand].transform.eulerAngles.y + 90 * rot) % 360, 0)));
                 }
                 // End tiles
                 if (tilemap[y, x] == TOP || tilemap[y, x] == BOT || tilemap[y, x] == LEFT || tilemap[y, x] == RIGHT)
                 {
-                    GameObject.Instantiate(EndTiles[(int)(Random.Range(0, EndTiles.Count))],
-                        new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+					int rot = 0;
+					int rand = (int)(Random.Range (0, EndTiles.Count));
+					if (tilemap [y, x] == RIGHT) {
+						rot = 3;
+					}
+					if (tilemap [y, x] == TOP) {
+						rot = 2;
+					}
+					if (tilemap [y, x] == LEFT) {
+						rot = 1;
+					}
+                    GameObject.Instantiate(EndTiles[rand],
+						new Vector3(-x * tileSize, 0, y * tileSize), 
+						Quaternion.Euler(new Vector3(0, (EndTiles[rand].transform.eulerAngles.y + 90 * rot) % 360, 0)));
                 }
                 // Through tiles
                 if (tilemap[y, x] == THROUGH_HORIZONTAL || tilemap[y, x] == THROUGH_VERTICAL)
                 {
-                    GameObject.Instantiate(ThroughTiles[(int)(Random.Range(0, ThroughTiles.Count))],
-                        new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+					int rot = 0;
+					int rand = (int)(Random.Range (0, ThroughTiles.Count));
+					if (tilemap [y, x] == THROUGH_HORIZONTAL) {
+						rot = 1;
+					}
+                    GameObject.Instantiate(ThroughTiles[rand],
+						new Vector3(-x * tileSize, 0, y * tileSize), 
+						Quaternion.Euler(new Vector3(0, (ThroughTiles[rand].transform.eulerAngles.y + 90 * rot) % 360, 0)));
                 }
                 // Cross tiles
                 if (tilemap[y, x] == CROSS)
                 {
-                    GameObject.Instantiate(LTiles[(int)(Random.Range(0, LTiles.Count))], 
-                        new Vector3(x * tileSize, 0, y * tileSize), Quaternion.identity);
+					int rand = (int)(Random.Range (0, CrossTiles.Count));
+					GameObject.Instantiate(CrossTiles[rand], 
+                        new Vector3(-x * tileSize, 0, y * tileSize), Quaternion.identity);
                 }
             }
         }
