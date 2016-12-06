@@ -45,6 +45,7 @@ public class TilingGenerator : EditorWindow
     private int mazeWidth = 4, mazeHeight = 4;
     private float tileSize;
     private int[] VEBP = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, HEBP = new int[] { 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0 };
+	private bool clearOldMap = false;
     private string VEBPString = "111111111111", HEBPString = "000110000001";
     private List<GameObject> EndTiles, LTiles, TTiles, CrossTiles, ThroughTiles;
     private GameObject tempEndObj, tempLObj, tempTobj, tempCrossObj, tempThroughObj;
@@ -76,6 +77,9 @@ public class TilingGenerator : EditorWindow
         }
         VEBPString = EditorGUILayout.TextField("VEBP", VEBPString);
         HEBPString = EditorGUILayout.TextField("HEBP", HEBPString);
+		if(GUILayout.Button ("Randomize bit vectors")){
+			randomizeBitVectors ();
+		}
         EditorGUILayout.Space();
 
 		EditorGUILayout.LabelField ("End tiles with the entrance at the bottom of the tile");
@@ -171,12 +175,14 @@ public class TilingGenerator : EditorWindow
 
         EditorGUILayout.Space();
 
+		GUILayout.BeginHorizontal ();
+		clearOldMap = EditorGUILayout.Toggle ("Clear old map on build", clearOldMap);
         if(GUILayout.Button("Build map"))
         {
 			if(ValidateBitVectors ())	
             	buildMap();
         }
-
+		GUILayout.EndHorizontal ();
         GUILayout.EndScrollView();
     }
 
@@ -360,7 +366,13 @@ public class TilingGenerator : EditorWindow
     private void buildMap()
     {
         int[,] tilemap = createTilingFromEBP();
-
+		if (clearOldMap) {
+			GameObject oldMap = GameObject.Find ("Map");
+			if(oldMap)
+				GameObject.DestroyImmediate (oldMap);
+		}
+		GameObject parent = new GameObject ();
+		parent.name = "Map";
         for(int x = 0; x < mazeWidth; x++)
         {
             for(int y = 0; y < mazeHeight; y++)
@@ -380,9 +392,10 @@ public class TilingGenerator : EditorWindow
 					if (tilemap [y, x] == TOP_LEFT) {
 						rot = 3;
 					}
-                    GameObject.Instantiate(LTiles[rand], 
+                    GameObject piece = GameObject.Instantiate(LTiles[rand], 
 						new Vector3(-x * tileSize, 0, y * tileSize), 
 						Quaternion.Euler(new Vector3(0, (LTiles[rand].transform.eulerAngles.y + 90 * rot) % 360, 0)));
+					piece.transform.SetParent (parent.transform);
                 }
                 // T Tiles
                 if(tilemap[y, x] == TOP_T || tilemap[y, x] == BOT_T || tilemap[y, x] == RIGHT_T || tilemap[y, x] == LEFT_T)
@@ -398,9 +411,10 @@ public class TilingGenerator : EditorWindow
 					if (tilemap [y, x] == RIGHT_T) {
 						rot = 3;
 					}
-                    GameObject.Instantiate(TTiles[rand],
+					GameObject piece = GameObject.Instantiate(TTiles[rand],
 						new Vector3(-x * tileSize, 0, y * tileSize), 
 						Quaternion.Euler(new Vector3(0, (TTiles[rand].transform.eulerAngles.y + 90 * rot) % 360, 0)));
+					piece.transform.SetParent (parent.transform);
                 }
                 // End tiles
                 if (tilemap[y, x] == TOP || tilemap[y, x] == BOT || tilemap[y, x] == LEFT || tilemap[y, x] == RIGHT)
@@ -416,9 +430,10 @@ public class TilingGenerator : EditorWindow
 					if (tilemap [y, x] == LEFT) {
 						rot = 1;
 					}
-                    GameObject.Instantiate(EndTiles[rand],
+					GameObject piece = GameObject.Instantiate(EndTiles[rand],
 						new Vector3(-x * tileSize, 0, y * tileSize), 
 						Quaternion.Euler(new Vector3(0, (EndTiles[rand].transform.eulerAngles.y + 90 * rot) % 360, 0)));
+					piece.transform.SetParent (parent.transform);
                 }
                 // Through tiles
                 if (tilemap[y, x] == THROUGH_HORIZONTAL || tilemap[y, x] == THROUGH_VERTICAL)
@@ -428,18 +443,54 @@ public class TilingGenerator : EditorWindow
 					if (tilemap [y, x] == THROUGH_HORIZONTAL) {
 						rot = 1;
 					}
-                    GameObject.Instantiate(ThroughTiles[rand],
+					GameObject piece = GameObject.Instantiate(ThroughTiles[rand],
 						new Vector3(-x * tileSize, 0, y * tileSize), 
 						Quaternion.Euler(new Vector3(0, (ThroughTiles[rand].transform.eulerAngles.y + 90 * rot) % 360, 0)));
+					piece.transform.SetParent (parent.transform);
                 }
                 // Cross tiles
                 if (tilemap[y, x] == CROSS)
                 {
 					int rand = (int)(Random.Range (0, CrossTiles.Count));
-					GameObject.Instantiate(CrossTiles[rand], 
+					GameObject piece = GameObject.Instantiate(CrossTiles[rand], 
                         new Vector3(-x * tileSize, 0, y * tileSize), Quaternion.identity);
+					piece.transform.SetParent (parent.transform);
                 }
             }
         }
     }
+	private void randomizeBitVectors(){
+		Grid G = new Grid (mazeWidth, mazeHeight);
+		G.instantiateVertices ();
+		G.randomizeEdgeWeights ();
+		Grid U = G.Prims (G.vertices[0, 0]);
+		VEBP = new int[mazeWidth * (mazeHeight - 1)];
+		HEBP = new int[mazeHeight * (mazeWidth - 1)];
+		for (int i = 0; i < VEBP.Length; i++) {
+			VEBP [i] = 0;
+		}
+		for (int i = 0; i < HEBP.Length; i++) {
+			HEBP [i] = 0;
+		}
+		foreach (Edge e in U.edges) {
+			if (e.v1.xPos == e.v2.xPos) {
+				//Debug.Log ("VEBP part");
+				VEBP[mazeWidth * Mathf.Min(e.v1.yPos, e.v2.yPos) + e.v1.xPos]= 1;
+
+			} else {
+				//Debug.Log ("HEBP part");
+				HEBP [mazeHeight * Mathf.Min (e.v1.xPos, e.v2.xPos) + e.v1.yPos] = 1;
+			}
+		}
+		string s = "";
+		for (int i = 0; i < VEBP.Length; i++) {
+			s += VEBP [i] + "";
+		}
+		VEBPString = s;
+		s = "";
+		for (int i = 0; i < HEBP.Length; i++) {
+			s += HEBP [i] + "";
+		}
+		HEBPString = s;
+	}
 }
