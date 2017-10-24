@@ -5,7 +5,7 @@ using System.IO;
 using UnityEditor;
 using Assets.Scripts.Editor;
 
-public class TilePathGenerator : MonoBehaviour {
+public class TilePathGenerator {
 
     private int maxNumTilesPerType;
     private int numPossibleExits;

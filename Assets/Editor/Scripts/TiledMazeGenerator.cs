@@ -72,7 +72,7 @@ public class TiledMazeGenerator : EditorWindow
 
     private int selectedRow, selectedColumn;
     private Texture2D[,] displayTextures = new Texture2D[4, 4];
-    private Texture2D[] textures = new Texture2D[1];
+    private Texture2D[] textures = new Texture2D[2];
     private Tile[,] tiles = new Tile[4, 4];
     private int[,] tiling = new int[4, 4];
     private string[,] tilingFiles = new string[4, 4];
@@ -165,7 +165,7 @@ public class TiledMazeGenerator : EditorWindow
         DropAreaGUI();
         TileOptions();
         TextureArea();
-        HeightmapArea();
+        //HeightmapArea();
         tilesName = EditorGUILayout.TextField("Name for tiles created", tilesName);
 
         GUILayout.BeginHorizontal();
@@ -719,7 +719,7 @@ public class TiledMazeGenerator : EditorWindow
                     con = "_?_?";
                 }
                 possibleFiles = Directory.GetFiles(Application.dataPath + "/" + usingPath, "EndDetail" + perTileDetail + con + ".txt");
-                filePath = possibleFiles[Random.Range(0, possibleFiles.Length)]; p= getPathFromFile(filePath);
+                filePath = possibleFiles[Random.Range(0, possibleFiles.Length)]; p = getPathFromFile(filePath);
                 p = rotateClockwise(p);
                 p = rotateClockwise(p);
                 p = rotateClockwise(p);
@@ -1194,20 +1194,9 @@ public class TiledMazeGenerator : EditorWindow
         baseTextureResolution = Mathf.ClosestPowerOfTwo(baseTextureResolution);
         baseTextureResolution = Mathf.Clamp(baseTextureResolution, 16, 2048);
        
-        for (int i = 0; i < textures.Length; i++)
-        {
-            textures[i] = (Texture2D)EditorGUILayout.ObjectField("Texture " + i, textures[i], typeof(Texture), true);
-        }
-        GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Add texture"))
-        {
-            ArrayUtility.Add(ref textures, null);
-        }
-        if (GUILayout.Button("Remove texture"))
-        {
-            if (textures.Length > 0) ArrayUtility.RemoveAt(ref textures, textures.Length - 1);
-        }
-        GUILayout.EndHorizontal();
+		textures[0] = (Texture2D)EditorGUILayout.ObjectField("Path texture: ", textures[0], typeof(Texture), true);
+		textures[1] = (Texture2D)EditorGUILayout.ObjectField("Non-path texture: ", textures[1], typeof(Texture), true);
+
     }
     public void HeightmapArea()
     {
